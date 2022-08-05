@@ -1,0 +1,103 @@
+import pandas as pd
+import os
+import torch as t
+import numpy as np
+import torchvision.transforms.functional as ff
+from torch.utils.data import Dataset
+from PIL import image
+import torchvison.transforms as transforms
+import matplotlib.pyplot as plt
+
+pd_label_color = pd.read_csv('./Camvid/class_dict.csv', sep=',')
+pd_label_color
+
+pd_label_color.index
+
+len(pd_label_color.index)
+
+tmp = label_color.iloc[2]
+print(tmp['r'])
+print(tmp['b'])
+
+name_value = pd_label_color['name'].values
+print(name_value)
+num_class = len(name_value)
+num_class
+
+colormap = []
+for i in range(len(pd_label_color.index)):
+    tmp = pd_label_color.iloc[i]
+    color = [tmp['r'], tmp['g'], tmp['b']]
+    colormap.append(color)
+print(colormap)
+
+cm = np.array(colormap).astype('uint8')
+cm
+
+def encode_label_pix(colormap):
+    cm2lbl = np.zeros(256 ** 3)
+    for i, cm in enumerate(colormap):
+        cm2lbl[(cm[0] * 256 + cm[1]) * 256 + cm[2]] = i
+    return
+
+cm2lbl = encode_label_pix(colormap)
+print(cm2lbl)
+print(cm2lbl.sum())
+
+label_path = '/content/Camvid/train_labels/0001TP_006690_L.png'
+label = Image.open(label_path).convert('RGB')
+label = np.array(label)
+demo_label = label[280:295, 280:295, :]
+plt.imshow(demo_label)
+plt.show()
+
+data = np.array(demo_label)
+print(data[:, :, 0])
+print('---------'*8)
+print(data[:, :, 1])
+print('---------'*8)
+print(data[:, :, 2]
+
+def encode_label_img(img):
+    data = np.array(img, dtype='int32')
+    idx = (data[:, :, 0] * 256 + data[:, :, 1]) * 256 + data[:, :, 2]
+    print(idx)
+    print('----')
+    print(cm2lbl[idx])
+    return np.array(cm2lbl[idx], dtype='int64')
+
+decoded_demo_label = image2label(demo_label)
+
+class LabelProcessor():
+    def __init__(self, file_path):
+        self.colormap = self.read_color_map(file_path)
+        self.cm2lbl = self.encode_label_pix(self.colormap)
+    
+    def read_color_map(self, file_path):
+        pd_label_color = pd.read_csv(file_path, sep=',')
+        name_value = pd_label_color['name'].values
+        num_class = len(name_value)
+        
+        colormap = []
+        for i in range(len(pd_label_color.index)):
+            tmp = pd_label_color.iloc[i]
+            color = [tmp['r'], tmp['g'], tmp['b']]
+            colormap.append(color)
+        cm = np.array(colormap).astype('uint8')
+        return colormap
+    
+    def encode_label_pix(self, colormap):
+        cm2lbl = np.zeros(256 ** 3)
+        for i, cm in enumerate(colormap):
+            cm2lbl[(cm[0] * 256 + cm[1]) * 256 + cm[2]] = i
+        return cm2lbl 
+    
+    def encode_label_img(self, img):
+        data = np.array(img, dtype='init32')
+        idx = (data[:, :, 0] * 256 + data[:, :, 1]) * 256 + data[:, :, 2]
+        return np.array(self.cm2lbl[idx], dtype='int64')
+
+class_dict_path = './CamVid/class_dict.csv'
+label_processor = LabelProcessor(class_dict_path)
+
+
